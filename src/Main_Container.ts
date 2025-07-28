@@ -10,6 +10,8 @@ export default class Main_Container extends Container {
 	private _lotuses:PIXI.Sprite;
 	private _boat:PIXI.Sprite;
 	private _displacementSprite:PIXI.Sprite;
+	private _iterator:number = 0;
+	private _boatContainer:PIXI.Container;
 
 	constructor() {
 		super();
@@ -66,14 +68,23 @@ export default class Main_Container extends Container {
 	}
 
 	private addedBoat():void {
+		this._boatContainer = new PIXI.Container;
+		this.addChild(this._boatContainer);
+		this._boatContainer.x = 1460;
+		this._boatContainer.y = 690;
+
 		this._boat = Sprite.from("boat");
-		this._boat.x = 1390;
-		this._boat.y = 580;
-		this.addChild(this._boat);
+		this._boat.x -= this._boat.width/2;
+		this._boat.y -= this._boat.height/1.5;
+		this._boatContainer.addChild(this._boat);
 	}
 
 	private ticker():void {
-	this._displacementSprite.x += 10;
-    this._displacementSprite.y += 6;
+		this._iterator ++
+		this._displacementSprite.x += 3;
+		this._displacementSprite.y += 2;
+
+		this._lotuses.y += Math.cos(this._iterator/20)/10;
+		this._boatContainer.rotation += Math.cos(this._iterator/50)/800;
 	}
 }
