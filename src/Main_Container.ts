@@ -9,6 +9,9 @@ export default class Main_Container extends Container {
 	private _water:PIXI.Sprite;
 	private _lotuses:PIXI.Sprite;
 	private _boat:PIXI.Sprite;
+	private _body:PIXI.Sprite;
+	private _umbrella:PIXI.Sprite;
+	private _wall:PIXI.Sprite;
 	private _displacementSprite:PIXI.Sprite;
 	private _iterator:number = 0;
 	private _boatContainer:PIXI.Container;
@@ -25,6 +28,9 @@ export default class Main_Container extends Container {
 			.add("water", "water.png")
 			.add("lotuses", "lotuses.png")
 			.add("boat", "boat.png")
+			.add("body", "body.png")
+			.add("umbrella", "umbrella.png")
+			.add("wall", "wall.png")
 			.add("displacement", "displacement.jpg");
 		loader.load((loader, resources)=> {
 			this.startProject();
@@ -34,7 +40,7 @@ export default class Main_Container extends Container {
 
 	private startProject():void {
 		this.addedBackground();
-		this.addedWater();
+		this.addedDisplacementFilter();
 		this.addedLotuses();
 		this.addedBoat();
 		Main.pixiApp.ticker.add(this.ticker, this);
@@ -45,19 +51,42 @@ export default class Main_Container extends Container {
 		this.addChild(this._background);
 	}
 
-	private addedWater():void {
-		this._water = Sprite.from("water");
-		this.addChild(this._water);
-		this._water.y = this._background.height - this._water.height;
-
+	private addedDisplacementFilter():void {
 		this._displacementSprite = PIXI.Sprite.from("displacement.jpg");
 		let displacementFilter = new PIXI.filters.DisplacementFilter(this._displacementSprite);
 		this._displacementSprite.texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
 		this.addChild(this._displacementSprite);
 		this._displacementSprite.alpha = .01;
-		this._water.filters = [displacementFilter];
     	this._displacementSprite.scale.x = 4;
     	this._displacementSprite.scale.y = 3;
+
+		this.addedWater(displacementFilter);
+		this.addedJapaneseWoman(displacementFilter);
+	}
+
+	private addedWater(filter:PIXI.filters.DisplacementFilter):void {
+		this._water = Sprite.from("water");
+		this.addChild(this._water);
+		this._water.y = this._background.height - this._water.height;
+		this._water.filters = [filter];
+	}
+
+	private addedJapaneseWoman(filter:PIXI.filters.DisplacementFilter):void{
+		this._body = Sprite.from("body");
+		this._body.x = 895;
+		this._body.y = this._background.height - this._body.height
+		this._body.filters = [filter];
+		this.addChild(this._body);
+
+		this._umbrella = Sprite.from("umbrella");
+		this._umbrella.x = 880;
+		this._umbrella.y = this._background.height - 215;
+		this.addChild(this._umbrella);
+
+		this._wall = Sprite.from("wall");
+		this._wall.x = 934;
+		this._wall.y = this._background.height - this._wall.height;
+		this.addChild(this._wall);
 	}
 
 	private addedLotuses():void {
