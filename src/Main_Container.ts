@@ -111,7 +111,6 @@ export default class Main_Container extends Container {
 	private ticker():void {
 		this._iterator ++
 		this._displacementSprite.x += 3;
-		this._displacementSprite.y += 2;
 
 		this._lotuses.y += Math.cos(this._iterator/20)/10;
 		this._boatContainer.rotation += Math.cos(this._iterator/50)/800;
