@@ -1,4 +1,4 @@
-# Wanderer game
+# Pixi Animation
 You can start this by clicking on the link https://dmitriynarzyaev.github.io/Animation/
 
 ## Deployment

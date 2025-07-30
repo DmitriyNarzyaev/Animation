@@ -12,6 +12,7 @@ export default class Main_Container extends Container {
 	private _body:PIXI.Sprite;
 	private _umbrella:PIXI.Sprite;
 	private _wall:PIXI.Sprite;
+	private _clouds:PIXI.Sprite;
 	private _displacementSprite:PIXI.Sprite;
 	private _iterator:number = 0;
 	private _boatContainer:PIXI.Container;
@@ -31,6 +32,7 @@ export default class Main_Container extends Container {
 			.add("body", "body.png")
 			.add("umbrella", "umbrella.png")
 			.add("wall", "wall.png")
+			.add("clouds", "clouds.png")
 			.add("displacement", "displacement.jpg");
 		loader.load((loader, resources)=> {
 			this.startProject();
@@ -43,6 +45,7 @@ export default class Main_Container extends Container {
 		this.addedDisplacementFilter();
 		this.addedLotuses();
 		this.addedBoat();
+		this.addedClouds();
 		Main.pixiApp.ticker.add(this.ticker, this);
 	}
 
@@ -106,6 +109,13 @@ export default class Main_Container extends Container {
 		this._boat.x -= this._boat.width/2;
 		this._boat.y -= this._boat.height/1.5;
 		this._boatContainer.addChild(this._boat);
+	}
+
+	private addedClouds():void {
+		this._clouds = Sprite.from("clouds");
+		this._clouds.height /= 1.5;
+		this._clouds.alpha = .5;
+		this.addChild(this._clouds);
 	}
 
 	private ticker():void {
