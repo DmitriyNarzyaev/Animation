@@ -16,6 +16,7 @@ export default class Main_Container extends Container {
 	private _displacementSprite:PIXI.Sprite;
 	private _iterator:number = 0;
 	private _boatContainer:PIXI.Container;
+	private _cloudsArray:Sprite[] = [];
 
 	constructor() {
 		super();
@@ -45,7 +46,7 @@ export default class Main_Container extends Container {
 		this.addedDisplacementFilter();
 		this.addedLotuses();
 		this.addedBoat();
-		this.addedClouds();
+		this.addedClouds(0);
 		Main.pixiApp.ticker.add(this.ticker, this);
 	}
 
@@ -111,10 +112,12 @@ export default class Main_Container extends Container {
 		this._boatContainer.addChild(this._boat);
 	}
 
-	private addedClouds():void {
+	private addedClouds(cloudsX:number):void {
 		this._clouds = Sprite.from("clouds");
 		this._clouds.height /= 1.5;
-		this._clouds.alpha = .5;
+		this._clouds.alpha = .3;
+		this._cloudsArray.push(this._clouds)
+		this._clouds.x = cloudsX
 		this.addChild(this._clouds);
 	}
 
@@ -124,5 +127,17 @@ export default class Main_Container extends Container {
 
 		this._lotuses.y += Math.cos(this._iterator/20)/10;
 		this._boatContainer.rotation += Math.cos(this._iterator/50)/800;
+
+		for (let iterator:number = 0; iterator < this._cloudsArray.length; iterator ++) {
+			let clouds: Sprite = this._cloudsArray[iterator];
+			clouds.x -= .25;
+
+			if (this._clouds.x + this._clouds.width <= Main_Container.WINDOW_WIDTH) {
+				this.addedClouds(this._clouds.x + this._clouds.width);
+			}
+			if (this._clouds.x + this._clouds.width <= 0) {
+			this.removeChild(this._clouds);
+			}
+		}
 	}
 }
