@@ -15,7 +15,6 @@ export default class Main_Container extends Container {
 	private _clouds:PIXI.Sprite;
 	private _displacementSprite:PIXI.Sprite;
 	private _iterator:number = 0;
-	private _boatContainer:PIXI.Container;
 	private _cloudsArray:Sprite[] = [];
 
 	constructor() {
@@ -101,15 +100,12 @@ export default class Main_Container extends Container {
 	}
 
 	private addedBoat():void {
-		this._boatContainer = new PIXI.Container;
-		this.addChild(this._boatContainer);
-		this._boatContainer.x = 1460;
-		this._boatContainer.y = 690;
-
 		this._boat = Sprite.from("boat");
-		this._boat.x -= this._boat.width/2;
-		this._boat.y -= this._boat.height/1.5;
-		this._boatContainer.addChild(this._boat);
+		this._boat.anchor.x = .5;
+		this._boat.anchor.y = .75;
+		this._boat.x = 1455;
+		this._boat.y = 705;
+		this.addChild(this._boat);
 	}
 
 	private addedClouds(cloudsX:number):void {
@@ -126,7 +122,7 @@ export default class Main_Container extends Container {
 		this._displacementSprite.x += 3;
 
 		this._lotuses.y += Math.cos(this._iterator/20)/10;
-		this._boatContainer.rotation += Math.cos(this._iterator/50)/800;
+		this._boat.rotation += Math.cos(this._iterator/50)/800;
 
 		for (let iterator:number = 0; iterator < this._cloudsArray.length; iterator ++) {
 			let clouds: Sprite = this._cloudsArray[iterator];
