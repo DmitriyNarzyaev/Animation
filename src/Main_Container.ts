@@ -6,7 +6,7 @@ import ColorMatrixFilter = PIXI.filters.ColorMatrixFilter;
 export default class Main_Container extends Container {
 	public static readonly WINDOW_WIDTH:number = 1920;
 	public static readonly WINDOW_HEIGHT:number = 885;
-	private _animationContainer:PIXI.Container;
+	private readonly _animationContainer:PIXI.Container;
 	private _background:PIXI.Sprite;
 	private _water:PIXI.Sprite;
 	private _lotuses:PIXI.Sprite;
@@ -39,9 +39,8 @@ export default class Main_Container extends Container {
 			.add("wall", "wall.png")
 			.add("clouds", "clouds.png")
 			.add("displacement", "displacement.jpg");
-		loader.load((loader, resources)=> {
+		loader.load(()=> {
 			this.startProject();
-
 		});
 	}
 
@@ -52,8 +51,12 @@ export default class Main_Container extends Container {
 		this.addedBoat();
 		this.addedClouds(0);
 		Main.pixiApp.ticker.add(this.ticker, this);
-
 		this._animationContainer.x = (Main_Container.WINDOW_WIDTH - this._background.width)/2;
+
+		const mask = new PIXI.Graphics()
+		mask.beginFill(0x000000)
+		mask.drawRect(this._animationContainer.x, this._animationContainer.y, this._background.width, this._background.height);
+		this._animationContainer.mask = mask;
 	}
 
 	private addedBackground():void {
