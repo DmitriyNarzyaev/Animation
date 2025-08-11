@@ -1,10 +1,12 @@
 import Container = PIXI.Container;
 import { Sprite } from "pixi.js";
 import { Main } from "./Main";
+import ColorMatrixFilter = PIXI.filters.ColorMatrixFilter;
 
 export default class Main_Container extends Container {
 	public static readonly WINDOW_WIDTH:number = 1920;
 	public static readonly WINDOW_HEIGHT:number = 885;
+	private _animationContainer:PIXI.Container;
 	private _background:PIXI.Sprite;
 	private _water:PIXI.Sprite;
 	private _lotuses:PIXI.Sprite;
@@ -16,9 +18,12 @@ export default class Main_Container extends Container {
 	private _displacementSprite:PIXI.Sprite;
 	private _iterator:number = 0;
 	private _cloudsArray:Sprite[] = [];
+	private _colorMatrix:ColorMatrixFilter;
 
 	constructor() {
 		super();
+		this._animationContainer = new PIXI.Container;
+		this.addChild(this._animationContainer);
 		this.pictureLoader();
 	}
 
@@ -47,18 +52,20 @@ export default class Main_Container extends Container {
 		this.addedBoat();
 		this.addedClouds(0);
 		Main.pixiApp.ticker.add(this.ticker, this);
+
+		this._animationContainer.x = (Main_Container.WINDOW_WIDTH - this._background.width)/2;
 	}
 
 	private addedBackground():void {
 		this._background = Sprite.from("background");
-		this.addChild(this._background);
+		this._animationContainer.addChild(this._background);
 	}
 
 	private addedDisplacementFilter():void {
 		this._displacementSprite = PIXI.Sprite.from("displacement.jpg");
 		let displacementFilter = new PIXI.filters.DisplacementFilter(this._displacementSprite);
 		this._displacementSprite.texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
-		this.addChild(this._displacementSprite);
+		this._animationContainer.addChild(this._displacementSprite);
 		this._displacementSprite.alpha = .01;
     	this._displacementSprite.scale.x = 4;
     	this._displacementSprite.scale.y = 3;
@@ -69,7 +76,7 @@ export default class Main_Container extends Container {
 
 	private addedWater(filter:PIXI.filters.DisplacementFilter):void {
 		this._water = Sprite.from("water");
-		this.addChild(this._water);
+		this._animationContainer.addChild(this._water);
 		this._water.y = this._background.height - this._water.height;
 		this._water.filters = [filter];
 	}
@@ -79,24 +86,24 @@ export default class Main_Container extends Container {
 		this._body.x = 895;
 		this._body.y = this._background.height - this._body.height
 		this._body.filters = [filter];
-		this.addChild(this._body);
+		this._animationContainer.addChild(this._body);
 
 		this._umbrella = Sprite.from("umbrella");
 		this._umbrella.x = 880;
 		this._umbrella.y = this._background.height - 215;
-		this.addChild(this._umbrella);
+		this._animationContainer.addChild(this._umbrella);
 
 		this._wall = Sprite.from("wall");
 		this._wall.x = 934;
 		this._wall.y = this._background.height - this._wall.height;
-		this.addChild(this._wall);
+		this._animationContainer.addChild(this._wall);
 	}
 
 	private addedLotuses():void {
 		this._lotuses = Sprite.from("lotuses");
 		this._lotuses.x = 230;
 		this._lotuses.y = 780;
-		this.addChild(this._lotuses);
+		this._animationContainer.addChild(this._lotuses);
 	}
 
 	private addedBoat():void {
@@ -105,16 +112,17 @@ export default class Main_Container extends Container {
 		this._boat.anchor.y = .75;
 		this._boat.x = 1455;
 		this._boat.y = 705;
-		this.addChild(this._boat);
+		this._animationContainer.addChild(this._boat);
 	}
 
 	private addedClouds(cloudsX:number):void {
+		this._colorMatrix = new PIXI.filters.ColorMatrixFilter();
 		this._clouds = Sprite.from("clouds");
 		this._clouds.height /= 1.5;
 		this._clouds.alpha = .3;
-		this._cloudsArray.push(this._clouds)
 		this._clouds.x = cloudsX
-		this.addChild(this._clouds);
+		this._cloudsArray.push(this._clouds)
+		this._animationContainer.addChild(this._clouds);
 	}
 
 	private ticker():void {
@@ -134,6 +142,9 @@ export default class Main_Container extends Container {
 			if (this._clouds.x + this._clouds.width <= 0) {
 			this.removeChild(this._clouds);
 			}
+
+			clouds.filters = [this._colorMatrix];
+			this._colorMatrix.contrast((Math.cos(this._iterator/100))-1.5, false);
 		}
 	}
 }
