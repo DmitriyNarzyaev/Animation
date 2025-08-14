@@ -2,11 +2,14 @@ import Container = PIXI.Container;
 import { Sprite } from "pixi.js";
 import { Main } from "./Main";
 import ColorMatrixFilter = PIXI.filters.ColorMatrixFilter;
+import NoiseFilter = PIXI.filters.NoiseFilter;
 
 export default class Main_Container extends Container {
 	public static readonly WINDOW_WIDTH:number = 1920;
 	public static readonly WINDOW_HEIGHT:number = 885;
 	private readonly _animationContainer:PIXI.Container;
+	private readonly _noiseFilter:NoiseFilter;
+	private _colorMatrix:ColorMatrixFilter;
 	private _background:PIXI.Sprite;
 	private _water:PIXI.Sprite;
 	private _lotuses:PIXI.Sprite;
@@ -18,12 +21,12 @@ export default class Main_Container extends Container {
 	private _displacementSprite:PIXI.Sprite;
 	private _iterator:number = 0;
 	private _cloudsArray:Sprite[] = [];
-	private _colorMatrix:ColorMatrixFilter;
 
 	constructor() {
 		super();
 		this._animationContainer = new PIXI.Container;
 		this.addChild(this._animationContainer);
+		this._noiseFilter = new PIXI.filters.NoiseFilter(.2);
 		this.pictureLoader();
 	}
 
@@ -60,8 +63,10 @@ export default class Main_Container extends Container {
 	}
 
 	private addedBackground():void {
+
 		this._background = Sprite.from("background");
 		this._animationContainer.addChild(this._background);
+
 	}
 
 	private addedDisplacementFilter():void {
@@ -145,6 +150,9 @@ export default class Main_Container extends Container {
 			if (this._clouds.x + this._clouds.width <= 0) {
 			this.removeChild(this._clouds);
 			}
+
+			this._animationContainer.filters = [this._noiseFilter];
+			this._noiseFilter.noise = (Math.cos(this._iterator/100))/10;
 
 			clouds.filters = [this._colorMatrix];
 			this._colorMatrix.contrast((Math.cos(this._iterator/100))-1.5, false);
