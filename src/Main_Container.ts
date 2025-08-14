@@ -21,6 +21,7 @@ export default class Main_Container extends Container {
 	private _displacementSprite:PIXI.Sprite;
 	private _iterator:number = 0;
 	private _cloudsArray:Sprite[] = [];
+	private _loader:PIXI.Graphics;
 
 	constructor() {
 		super();
@@ -42,9 +43,27 @@ export default class Main_Container extends Container {
 			.add("wall", "wall.png")
 			.add("clouds", "clouds.png")
 			.add("displacement", "displacement.jpg");
+
+		loader.onProgress.add(() => {
+			this.loaderProgress(loader.progress.toFixed(2) as unknown as number * 15)
+		});
 		loader.load(()=> {
+			this.removeChild(this._loader);
 			this.startProject();
 		});
+	}
+
+	private loaderProgress(lWidth:number):void {
+		let loaderX:number = (Main_Container.WINDOW_WIDTH - 1500)/2;
+		let loaderY:number = Main_Container.WINDOW_HEIGHT - 20;
+		if(this._loader){
+			this.removeChild(this._loader);
+		}
+		this._loader = new PIXI.Graphics;
+		this._loader.beginFill(0x885522);
+		this._loader.drawRect(loaderX, loaderY, lWidth, 10);
+		this.addChild(this._loader)
+		console.log(lWidth);
 	}
 
 	private startProject():void {
