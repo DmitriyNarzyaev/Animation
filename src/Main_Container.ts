@@ -48,11 +48,11 @@ export default class Main_Container extends Container {
 		loader.onProgress.add(() => {
 			this.addedProgressBar(loader.progress.toFixed(2) as unknown as number * 15)
 		});
+
 		loader.load(()=> {
-			const timerId = setTimeout(() => {
+			setTimeout(() => {
 				this.startProject();
-			}, 500)
-			//this.startProject();
+			}, 500);
 		});
 	}
 
