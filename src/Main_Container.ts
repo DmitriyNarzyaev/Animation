@@ -21,7 +21,8 @@ export default class Main_Container extends Container {
 	private _displacementSprite:PIXI.Sprite;
 	private _iterator:number = 0;
 	private _cloudsArray:Sprite[] = [];
-	private _loader:PIXI.Graphics;
+	private _progressBar:PIXI.Graphics;
+	private _progressBarContainer:PIXI.Container;
 
 	constructor() {
 		super();
@@ -45,28 +46,43 @@ export default class Main_Container extends Container {
 			.add("displacement", "displacement.jpg");
 
 		loader.onProgress.add(() => {
-			this.loaderProgress(loader.progress.toFixed(2) as unknown as number * 15)
+			this.addedProgressBar(loader.progress.toFixed(2) as unknown as number * 15)
 		});
 		loader.load(()=> {
-			this.removeChild(this._loader);
-			this.startProject();
+			const timerId = setTimeout(() => {
+				this.startProject();
+			}, 500)
+			//this.startProject();
 		});
 	}
 
-	private loaderProgress(lWidth:number):void {
+	private addedProgressBar(lWidth:number):void {
 		let loaderX:number = (Main_Container.WINDOW_WIDTH - 1500)/2;
-		let loaderY:number = Main_Container.WINDOW_HEIGHT - 20;
-		if(this._loader){
-			this.removeChild(this._loader);
+		let loaderY:number = Main_Container.WINDOW_HEIGHT /1.2;
+
+		if (this._progressBarContainer){
+			this.removeChild(this._progressBarContainer);
 		}
-		this._loader = new PIXI.Graphics;
-		this._loader.beginFill(0x885522);
-		this._loader.drawRect(loaderX, loaderY, lWidth, 10);
-		this.addChild(this._loader)
-		console.log(lWidth);
+		this._progressBarContainer = new PIXI.Container;
+		this.addChild(this._progressBarContainer);
+		this._progressBarContainer.x = loaderX;
+		this._progressBarContainer.y = loaderY;
+		this._progressBarContainer.interactive = true;
+		this._progressBarContainer.buttonMode = true;
+
+		let progressBarBorders:PIXI.Graphics = new PIXI.Graphics;
+		progressBarBorders.beginFill(0xffffff, .1);
+		progressBarBorders.drawRect(0, 0, 1500, 12);
+		this._progressBarContainer.addChild(progressBarBorders)
+
+		this._progressBar = new PIXI.Graphics;
+		this._progressBar.beginFill(0x885522);
+		this._progressBar.drawRect(1, 1, lWidth, 10);
+		this._progressBarContainer.addChild(this._progressBar)
 	}
 
 	private startProject():void {
+		this.removeChild(this._progressBarContainer);
 		this.addedBackground();
 		this.addedDisplacementFilter();
 		this.addedLotuses();
@@ -82,10 +98,8 @@ export default class Main_Container extends Container {
 	}
 
 	private addedBackground():void {
-
 		this._background = Sprite.from("background");
 		this._animationContainer.addChild(this._background);
-
 	}
 
 	private addedDisplacementFilter():void {
